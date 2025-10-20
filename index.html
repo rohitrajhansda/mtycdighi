@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>लाइव फ़ुटबॉल स्कोरबोर्ड - MAKHON TOLA YOUTH CLUB</title>
+    <style>
+        /* सामान्य शैली और मोबाइल अनुकूलन (General Styles and Mobile Optimization) */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 100%;
+            margin: auto;
+            background: #ffffff;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* हेडर (Header) */
+        header {
+            text-align: center;
+            padding: 15px 10px;
+            background-color: #0d47a1; /* गहरा नीला */
+            color: white;
+            margin-bottom: 10px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.6em; /* मोबाइल के लिए साइज़ */
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+        }
+
+        /* *************************************************************** */
+        /* COUNTDOWN TIMER STYLES (New Addition) */
+        /* *************************************************************** */
+        .countdown-wrapper {
+            background-color: #ffeb3b; /* हल्का पीला */
+            color: #333;
+            padding: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .time-unit-mini {
+            line-height: 1.1;
+        }
+
+        .time-value-mini {
+            font-size: 1.6em;
+            font-weight: 900;
+            color: #d32f2f; /* लाल रंग */
+            display: block;
+        }
+
+        .time-label-mini {
+            font-size: 0.65em;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        #countdown-message {
+            color: #388e3c;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            display: none;
+        }
+        /* *************************************************************** */
+
+
+        /* सेक्शन हेडिंग (Section Headings) */
+        .section-title {
+            text-align: center;
+            color: #d32f2f;
+            font-size: 1.4em;
+            margin: 20px 0 15px;
+            border-bottom: 2px solid #d32f2f;
+            padding-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* दिन का शीर्षक (Day Title) */
+        .day-title {
+            text-align: center;
+            font-size: 1.2em;
+            color: #388e3c;
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0 8px;
+            font-weight: bold;
+        }
+
+        /* मैच कार्ड डिज़ाइन (Match Card Design for Mobile) */
+        .match-card {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .match-info .time-group {
+            font-size: 0.85em;
+            color: #757575;
+            font-weight: bold;
+        }
+        .live-tag {
+            background-color: #ff0000;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+        .winner-tag {
+            background-color: #90EE90;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: bold;
+            /* animation: pulse 1.5s infinite; (Winner tag doesn't need pulse) */
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+        .team-row:last-child {
+            border-bottom: none;
+        }
+
+        .team-name {
+            font-weight: bold;
+            color: #1a237e;
+            width: 50%;
+            text-align: left;
+            font-size: 0.95em;
+        }
+        .scores {
+            display: flex;
+            gap: 5px;
+            width: 45%;
+            justify-content: flex-end;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .score-label {
+            font-size: 0.7em;
+            color: #d32f2f;
+        }
+        .penalty-label {
+            font-size: 0.7em;
+            color: #0d47a1;
+        }
+
+        .score-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .score, .penalty {
+            font-weight: 900;
+            font-size: 1.1em;
+            padding: 2px 5px;
+            border-radius: 3px;
+            min-width: 20px;
+            text-align: center;
+        }
+        .score {
+            color: white;
+            background-color: #90EE90;
+        }
+        .penalty {
+            color: #0d47a1;
+            background-color: #e3f2fd;
+        }
+
+        /* प्राइज़ टेबल (Prize Table) */
+        .prize-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .prize-table th, .prize-table td {
+            padding: 8px 5px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 0.8em;
+        }
+        .prize-table thead th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* फुटर (Footer) - Original */
+        footer {
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #333;
+            color: white;
+            font-size: 0.8em;
+            border-radius: 10px;
+        }
+        footer span {
+            color: #ffeb3b;
+            font-weight: bold;
+        }
+
+        /* Committee Footer - From 2nd code block */
+        .committee-wrapper footer {
+            background-color: #333;
+            border-radius: 6px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        /* *************************************************************** */
+        /* COMMITTEE SECTION - DESIGN 3 (COMPACT RED & BLACK) - Added Styles */
+        /* *************************************************************** */
+
+        /* Main Wrapper (600px width limit aur centering) */
+        .committee-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #FF8C00; /* DarkOrange/ background */
+            border-radius: 8px;
+            color: white;
+            padding: 15px 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-top: 20px; /* Separator from main content */
+        }
+
+        .committee-title-3 {
+            text-align: center;
+            color: #ff3333; /* Bright Red */
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #333;
+            font-weight: bold;
+        }
+
+        /* Flexbox for layout (cards ko adjust karne ke liye) */
+        .role-flex-compact {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 0 5px;
+        }
+
+        /* Individual Card Style */
+        .role-card-compact {
+            width: 100%; /* Mobile: 2 cards per row */
+            margin-bottom: 5px;
+            background-color: #333333;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.4); /* Red glow effect */
+            text-align: center;
+        }
+
+        .role-title-compact {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            border-bottom: 1px dashed #666;
+            padding-bottom: 3px;
+        }
+        .member-names-compact {
+            font-size: 0.8em;
+            color: #ffaaaa; /* Halka Red/Pink text */
+            line-height: 1.3;
+        }
+
+        /* Desktop/Tablet adjustment (4 cards per row) */
+        @media (min-width: 600px) {
+            .role-card-compact {
+                width: 22%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>⚽THREE DAY'S' FOOTBALL TOURNAMENT 2025⚽</h1>
+        <p>MAKHON TOLA YOUTH CLUB DIGHI BAHATOLA DUMKA</p>
+        <p>Date: **18, 19 & 20 NOVEMBER 2025**</p>
+    </header>
+
+    <div class="countdown-wrapper">
+        <div id="countdown-title">⏰ Countdown to Football Tournament ⏰</div>
+        <div id="countdown-message" style="display:none;">टूर्नामेंट शुरू हो चुका है! BEST OF LUCK! ⚽</div>
+
+        <div id="countdown-timer" class="countdown-timer">
+            <div class="time-unit-mini">
+                <span id="days" class="time-value-mini">00</span>
+                <span class="time-label-mini">दिन</span>
+            </div>
+            <div class="time-unit-mini">
+                <span id="hours" class="time-value-mini">00</span>
+                <span class="time-label-mini">घंटे</span>
+            </div>
+            <div class="time-unit-mini">
+                <span id="minutes" class="time-value-mini">00</span>
+                <span class="time-label-mini">मिनट</span>
+            </div>
+            <div class="time-unit-mini">
+                <span id="seconds" class="time-value-mini">00</span>
+                <span class="time-label-mini">सेकंड</span>
+            </div>
+        </div>
+    </div>
+    <div class="">
+        👁VIEWERS:
+        <a href="https://www.freecounterstat.com" target="_blank">
+
+            <div id="sfcxzzag6fe1nyhlg9ebg3r8gt6mxslp8wc"></div><script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=xzzag6fe1nyhlg9ebg3r8gt6mxslp8wc&down=async" async></script><noscript><a href="https://www.freecounterstat.com" title="website counter"><img src="https://counter1.optistats.ovh/private/freecounterstat.php?c=xzzag6fe1nyhlg9ebg3r8gt6mxslp8wc" border="0" title="website counter" alt="website counter"></a></noscript>
+        </a>
+    </div>
+    <h2 class="section-title">🗓️ गेम शेड्यूल और LIVE स्कोर 🗓️</h2>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 5px; padding-right: 5px; font-size: 0.8em; font-weight: bold;">
+        <div style="width: 50%; display: flex; justify-content: flex-end; gap: 8px;">
+            <span style="color: #d32f2f;">MATCH</span>
+            <span style="color: #0d47a1;">PENALTY</span>
+        </div>
+    </div>
+
+    <h3 class="day-title">Day 1: Tuesday, 18-11-2025</h3>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">08:00 AM | GROUP A</span>
+            <span class="live-tag">COMING SOON</span>
+            <span class="-tag"></span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">TILKA BABA</span>
+            <div class="scores">    <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">BINSARIYA GAD</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">09:10 AM | GROUP B</span>
+            <span class="live-tag">NEXT MATCH</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">EX 11 DUMKA</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">FRIENDS CLUB</span>
+            <div class="scores">      <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">10:20 AM | GROUP A</span>
+
+        </div>
+        <div class="team-row">
+            <span class="team-name">A.J.</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">F.C. CHANDOPANI</span>
+            <div class="scores">      <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">11:30 AM | GROUP B</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">RAPAJ STAR DUMKA</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">BHAI BHAI F.C. JAMA</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">01:00 PM | GROUP A</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER 1</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER 2</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">02:10 PM | GROUP B</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER 1</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER 2</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="day-title">Day 2: Wednesday, 19-11-2025</h3>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">08:00 AM | GROUP A</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">PRISHA ANGLE DUMKA</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">HUDING EPIL SPORTING CLUB DUMKA</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">09:10 AM | GROUP B</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">F.C. MURMU BROTHERS DUMKA</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">N.M.F.C.</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">10:20 AM | GROUP A</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">LACHHIPUR EXPRESS</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">MURMU STAR GARAM JALEBI AMRAPARA</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">11:30 AM | GROUP B</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">F.C. HEMBROM STONE</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">F. C. JUNNIOR TEAM</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">01:00 PM | GROUP A</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER 1</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER 2</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">02:10 PM | GROUP B</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER 1</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER 2</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="day-title">Day 3: Thursday, 20-11-2025 (Playoffs & Finals)</h3>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">08:00 AM |GIRL'S TEAM (GROUP A)</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">F.C. SANTI NAGAR</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">NEW STAR DUMKA</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-info">
+            <span class="time-group">09:00 AM |GIRL'S TEAM (GROUP B)</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">MURMU STAR</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">PARI F.C.</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card" style="background-color: #e8f5e9;">
+        <div class="match-info">
+            <span class="time-group">10:00 AM | **SEMI FINAL 1**</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">Winner DAY 1 (GROUP A)</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">Winner DAY 2 (GROUP A)</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+    <div class="match-card" style="background-color: #e8f5e9;">
+        <div class="match-info">
+            <span class="time-group">11:10 AM | **SEMI FINAL 2**</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">Winner DAY 1 (GROUP B)</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">Winner DAY 2 (GROUP B)</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card" style="background-color: #fff3e0;">
+        <div class="match-info">
+            <span class="time-group">01:30 PM | **GIRL'S FINAL**</span>
+            <span class="live-tag">FINAL</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER (GROUP A)</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">WINNER (GROUP B)</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="match-card" style="background-color: #fff3e0;">
+        <div class="match-info">
+            <span class="time-group">02:30 PM | **BOY'S FINAL**</span>
+            <span class="live-tag">FINAL</span>
+        </div>
+        <div class="team-row">
+            <span class="team-name">Winner Semi Final 1</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+        <div class="team-row">
+            <span class="team-name">Winner Semi Final 2</span>
+            <div class="scores">     <span class="-tag"></span>
+                <span class="score">[ ]</span>
+                <span class="penalty">[ ]</span>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin: 30px 0; border-top: 1px dashed #ccc;">
+
+    <h2 class="section-title">💰 पुरस्कार राशि (PRIZE MONEY) 💰</h2>
+
+    <table class="prize-table">
+        <thead>
+            <tr>
+                <th>श्रेणी</th>
+                <th>1st Prize</th>
+                <th>2nd Prize</th>
+                <th>3rd Prize</th>
+                <th>4th Prize</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**BOY'S**</td>
+                <td>₹ 70,000</td>
+                <td>₹ 50,000</td>
+                <td>₹ 15,000</td>
+                <td>₹ 15,000</td>
+            </tr>
+            <tr>
+                <td>**GIRL'S**</td>
+                <td>₹ 7,000</td>
+                <td>₹ 5,000</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 25px; padding: 10px; background-color: #fff9c4; border-left: 4px solid #ffeb3b; border-radius: 4px;">
+        <h3 style="color: #f57f17; font-size: 1.2em; margin-top: 0;">📢 महत्वपूर्ण निर्देश (Instructions) 📢</h3>
+        <ul style="list-style-type: none; padding-left: 0; font-size: 0.9em;">
+
+            <li>⭐ खिलाड़ियों को समय पर लाने के लिए सभी कप्तानों से अनुरोध किया जाता है।</li>
+             <li>⭐ सभी कप्तानों और प्रबंधकों से अनुरोध है कि वे खेल से 30 मिनट पहले समिति से संपर्क करें.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="committee-wrapper">
+    <div class="committee-title-3">🤝 MAKHON TOLA YOUTH CLUB COMMITTEE 🤝</div>
+
+    <div class="role-flex-compact">
+
+        <div class="role-card-compact">
+            <div class="role-title-compact">PRESIDENT</div>
+            <div class="member-names-compact">MAHESH MURMU<br>SURESH MARANDI</div>
+        </div>
+
+        <div class="role-card-compact">
+            <div class="role-title-compact">VICE PRESIDENT</div>
+            <div class="member-names-compact">PRAVEEN HEMBROM<br>JOGESH SOREN</div>
+        </div>
+
+        <div class="role-card-compact">
+            <div class="role-title-compact">SECRETARY</div>
+            <div class="member-names-compact">PRITAM HEMBROM<br>WILLIAM KISKU</div>
+        </div>
+
+        <div class="role-card-compact">
+            <div class="role-title-compact">TREASURER</div>
+            <div class="member-names-compact">SHIVA SOREN (MATHO)<br>PRITHWICHAN KISKU(MARI DA)</div>
+        </div>
+    </div>
+    <footer>
+    Designed & Managed by <span>Rohit Raj Hansda</span>
+    </footer>
+</div>
+<script>
+    // JavaScript Logic
+
+    // लक्ष्य तिथि (18 नवंबर 2025, सुबह 8:00 बजे पहले मैच के समय पर)
+    // NOTE: मैंने इसे 18/11/2025 08:00:00 AM पर सेट किया है, जो पहले मैच का समय है।
+    const targetDate = new Date("November 18, 2025 08:00:00 AM").getTime();
+
+    // तत्वों को HTML से प्राप्त करें
+    const daysElement = document.getElementById("days");
+    const hoursElement = document.getElementById("hours");
+    const minutesElement = document.getElementById("minutes");
+    const secondsElement = document.getElementById("seconds");
+    const countdownTimerDiv = document.getElementById("countdown-timer");
+    const countdownMessage = document.getElementById("countdown-message");
+    const countdownTitle = document.getElementById("countdown-title");
+
+    // हर 1 सेकंड में अपडेट करें
+    const x = setInterval(function() {
+
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        // गणना के लिए समय की इकाइयाँ
+        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+        const _MS_PER_HOUR = 1000 * 60 * 60;
+        const _MS_PER_MINUTE = 1000 * 60;
+        const _MS_PER_SECOND = 1000;
+
+        const days = Math.floor(distance / _MS_PER_DAY);
+        const hours = Math.floor((distance % _MS_PER_DAY) / _MS_PER_HOUR);
+        const minutes = Math.floor((distance % _MS_PER_HOUR) / _MS_PER_MINUTE);
+        const seconds = Math.floor((distance % _MS_PER_MINUTE) / _MS_PER_SECOND);
+
+        // संख्या को दो अंकों के रूप में फ़ॉर्मेट करने का फ़ंक्शन
+        const formatTime = (time) => String(time).padStart(2, '0');
+
+        // HTML तत्वों में परिणाम प्रदर्शित करें
+        daysElement.innerHTML = formatTime(days);
+        hoursElement.innerHTML = formatTime(hours);
+        minutesElement.innerHTML = formatTime(minutes);
+        secondsElement.innerHTML = formatTime(seconds);
+
+        // अगर काउंटडाउन खत्म हो गया है
+        if (distance < 0) {
+            clearInterval(x);
+            daysElement.innerHTML = "00";
+            hoursElement.innerHTML = "00";
+            minutesElement.innerHTML = "00";
+            secondsElement.innerHTML = "00";
+
+            // टाइमर छिपाएँ और समाप्ति संदेश दिखाएँ
+            countdownTimerDiv.style.display = "none";
+            countdownTitle.style.display = "none";
+            countdownMessage.style.display = "block";
+
+            // पूरे रैपर का रंग बदलें
+            document.querySelector('.countdown-wrapper').style.backgroundColor = '#d4edda';
+            document.querySelector('.countdown-wrapper').style.color = '#155724';
+        }
+    }, 1000); // 1000 मिलीसेकंड = 1 सेकंड
+</script>
+</body>
+</html>
